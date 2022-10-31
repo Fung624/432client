@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useLoadScript } from "@react-google-maps/api"
 import logo from './img/logo1.png'
 import logo1 from './img/logo.png'
+import cant from './img/cant.png'
 import './css/App.css'
 import Map from "./components/Map"
 import Result from "./components/Result"
@@ -23,17 +24,19 @@ export default function App () {
   const [searching, setSearching] = useState([])
   const [count, setCount] = useState(null)
   const [loading, setLoading] = useState(false)
+  const [InStatus, setInStatus] = useState({ "status": "", "text": "" })
+  const [traReStatus, setTraReStatus] = useState({ "status": "", "text": "" })
 
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: "AIzaSyCQ1LyU9d52CXM2acseyFBFhU9SlHv9HXQ"
   })
 
   async function getData () {
-    let res = await fetch("/init")
+    let res = await fetch("http://3.25.109.30:8001/init")
+    setInStatus({ "status": res.status, "text": res.statusText })
     let data = await res.json()
     let mar = await data.apiInfo.info
     let top = await data.TopTen.data
-    console.log(data)
     return [mar, top]
   }
 
@@ -42,6 +45,7 @@ export default function App () {
     setCount(null)
     let s = searchDescription
     setSearching(s)
+    updateList()
     try {
       let res = await fetch("/traffic", {
         method: 'POST',
@@ -50,14 +54,24 @@ export default function App () {
         },
         body: JSON.stringify(searchID)
       })
+      setTraReStatus(({ "status": res.status, "text": res.statusText }))
       let data = await res.json()
       setCount(data.countInfo)
-      console.log(data.countInfo)
     } catch {
 
     }
   }
 
+  async function updateList () {
+    try {
+      let res = await fetch("/init")
+      let data = await res.json()
+      let top = await data.TopTen.data
+      setTopTen(top)
+    } catch {
+      console.log()
+    }
+  }
 
   async function deleteList () {
     let id = searchID
@@ -66,7 +80,6 @@ export default function App () {
     description.map((i, n) => {
       if (i == del) {
         num = n
-        console.log(i)
       }
     })
     id.splice(num, 1)
@@ -125,69 +138,89 @@ export default function App () {
           </NavbarBrand>
         </Navbar>
       </header>
+      {InStatus.status == 500 ?
 
-      <main className='main'>
+        <div className="cant">
+          {InStatus.status}
+          <br></br>
+          {InStatus.text}
+          <br></br>
+        </div> :
 
-        <section>
-          <Container>
-            <Row>
-              <Col>
-                <h1 className="bigtitle">Traffic-Aid</h1>
-              </Col>
-            </Row>
-          </Container>
-        </section>
+        <main className='main'>
 
-        <section>
-          <Container>
-            <Row>
-              <Col>
-                <Result searching={searching} count={count} loading={loading} />
-              </Col>
-            </Row>
-          </Container>
-        </section>
+          <section>
+            <Container>
+              <Row>
+                <Col>
+                  <h1 className="bigtitle">Traffic-Aid</h1>
+                </Col>
+              </Row>
+            </Container>
+          </section>
 
-        <section className='fix'>
-          <Container>
-            <Row>
-              <Col>
-                <Search searchID={searchID} searchDescription={searchDescription} setDel={setDel} search={search} />
-              </Col>
-            </Row>
-          </Container>
-        </section>
-        {
-          markers == null ?
-            <section className='fix'>
-              <Container>
-                <Row>
-                  <Col>
-                    <BounceLoader
-                      color="#36d7b7"
-                      size={100}
-                      className='load'
-                    />
-                  </Col>
-                </Row>
-              </Container>
-            </section>
+          {traReStatus.status == 408 || traReStatus.status == 404 ?
+            <div className="cants">
+              <img src={cant} className="cantimg"></img>
+              {traReStatus.status}
+              <img src={cant} className="cantimg"></img>
+              <br></br>
+              {traReStatus.text}
+            </div>
             :
             <section>
               <Container>
                 <Row>
                   <Col>
-                    <List topTen={topTen} />
-                  </Col>
-                  <Col>
-                    {isLoaded ? <Map markers={markers} setSearchID={setSearchID} setSearchDescription={setSearchDescription} searchID={searchID} searchDescription={searchDescription} /> : null}
+                    <Result searching={searching} count={count} loading={loading} />
                   </Col>
                 </Row>
               </Container>
             </section>
-        }
-      </main>
+          }
 
+          <section className='fix'>
+            <Container>
+              <Row>
+                <Col>
+                  <Search searchID={searchID} searchDescription={searchDescription} setDel={setDel} search={search} />
+                </Col>
+              </Row>
+            </Container>
+          </section>
+
+          {
+            markers == null ?
+              <section className='fix'>
+                <Container>
+                  <Row>
+                    <Col>
+                      <BounceLoader
+                        color="#36d7b7"
+                        size={100}
+                        className='load'
+                      />
+                    </Col>
+                  </Row>
+                </Container>
+              </section>
+              :
+              <section>
+                <Container>
+                  <Row>
+                    <Col>
+                      <List topTen={topTen} />
+                    </Col>
+                    <Col>
+                      {isLoaded ? <Map markers={markers} setSearchID={setSearchID} setSearchDescription={setSearchDescription} searchID={searchID} searchDescription={searchDescription} /> : null}
+                    </Col>
+                  </Row>
+                </Container>
+              </section>
+          }
+
+        </main>
+      }
       <footer>
         <div className='container-fluid footer'>
           <div>Copyright © 2022 PINK</div>
@@ -195,5 +228,6 @@ export default function App () {
       </footer>
 
     </div>
+
   )
 }

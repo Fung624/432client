@@ -53,3 +53,20 @@
   top: 230px;
   padding-bottom: 600px;
 }
+
+.cant {
+  padding-top: 100px;
+  height: 1000px;
+  font-size: 130px;
+  color: aliceblue;
+}
+
+.cants {
+  font-size: 40px;
+  color: aliceblue;
+  padding-bottom: 30px;
+}
+
+.cantimg {
+  height: 60px;
+}
