@@ -3,3 +3,7 @@
   background-color: rgb(228, 139, 225);
   border: 0ch;
 }
+
+.count {
+  text-align: right;
+}

@@ -32,7 +32,7 @@ export default function App () {
   })
 
   async function getData () {
-    let res = await fetch("http://3.25.109.30:8001/init")
+    let res = await fetch("/init")
     setInStatus({ "status": res.status, "text": res.statusText })
     let data = await res.json()
     let mar = await data.apiInfo.info

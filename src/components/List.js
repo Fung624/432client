@@ -19,7 +19,8 @@ export default function List (props) {
           {". "}
           {name}
           {" "}
-          {count}
+          <span className="count">{count}</span>
+
         </ListGroupItem>
       ))}
     </ListGroup>
