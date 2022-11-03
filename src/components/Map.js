@@ -32,7 +32,7 @@ function Map (props) {
       zoom={12}
       center={center}
       onClick={() => setActiveMarker(null)}
-      mapContainerStyle={{ width: "100", height: "500px" }}
+      mapContainerStyle={{ width: "100%", height: "100%" }}
     >
       {props.markers == null ? <p>Loading</p> : props.markers.map(({ id, description, url, position }) => (
         <Marker

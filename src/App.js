@@ -32,7 +32,7 @@ export default function App () {
   })
 
   async function getData () {
-    let res = await fetch("/init")
+    let res = await fetch("http://54.66.25.232:8001/init")
     setInStatus({ "status": res.status, "text": res.statusText })
     let data = await res.json()
     let mar = await data.apiInfo.info
@@ -41,13 +41,14 @@ export default function App () {
   }
 
   async function search () {
+    setTraReStatus({ "status": "", "text": "" })
     setLoading(true)
     setCount(null)
     let s = searchDescription
     setSearching(s)
     updateList()
     try {
-      let res = await fetch("/traffic", {
+      let res = await fetch("http://54.66.25.232:8001/traffic", {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -64,7 +65,7 @@ export default function App () {
 
   async function updateList () {
     try {
-      let res = await fetch("/init")
+      let res = await fetch("http://54.66.25.232:8001/init")
       let data = await res.json()
       let top = await data.TopTen.data
       setTopTen(top)
@@ -208,12 +209,16 @@ export default function App () {
               <section>
                 <Container>
                   <Row>
-                    <Col>
+
+                    <Col xs="5">
                       <List topTen={topTen} />
                     </Col>
-                    <Col>
+
+
+                    <Col xs="7">
                       {isLoaded ? <Map markers={markers} setSearchID={setSearchID} setSearchDescription={setSearchDescription} searchID={searchID} searchDescription={searchDescription} /> : null}
                     </Col>
+
                   </Row>
                 </Container>
               </section>
