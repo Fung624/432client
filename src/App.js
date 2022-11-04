@@ -32,7 +32,7 @@ export default function App () {
   })
 
   async function getData () {
-    let res = await fetch("http://54.66.25.232:8001/init")
+    let res = await fetch("/init")
     setInStatus({ "status": res.status, "text": res.statusText })
     let data = await res.json()
     let mar = await data.apiInfo.info
@@ -48,7 +48,7 @@ export default function App () {
     setSearching(s)
     updateList()
     try {
-      let res = await fetch("http://54.66.25.232:8001/traffic", {
+      let res = await fetch("/traffic", {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -65,7 +65,7 @@ export default function App () {
 
   async function updateList () {
     try {
-      let res = await fetch("http://54.66.25.232:8001/init")
+      let res = await fetch("/init")
       let data = await res.json()
       let top = await data.TopTen.data
       setTopTen(top)
